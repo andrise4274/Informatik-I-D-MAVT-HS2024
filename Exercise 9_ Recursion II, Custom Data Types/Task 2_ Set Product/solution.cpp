@@ -5,51 +5,51 @@
 #include "solution.h"
 
 // recursive function
-StringSet cart_product(const std::vector<CharSet>& prev_sets, int index);
+StringSet cart_product(const std::vector<CharSet>& sets, int max_index);
+// convert charset to stringset
+StringSet convert(CharSet set);
 
 
+// PRE: takes a vector of CharSets
+// POST: returns the Stringset with all cartesian combinations
 StringSet set_product(const std::vector<CharSet>& sets) {
   // check if set is empty
   if (int(sets.size()) == 0) {
     return StringSet("");
   }
   // recursively add combinations
-  // index goes from 0 to sets.size() - 1
-  return cart_product(sets, 0);
+  return cart_product(sets, int(sets.size() - 1));
 }
 
-
-StringSet cart_product(const std::vector<CharSet>& sets, int index) {
-  // Convert to vector
-  std::vector<char> elements(sets[index].elements().begin(), sets[index].elements().end());
-  
-  // index goes from 0 to sets.size() - 1
-  // terminal condition: if only one set left
-  if (index == int(sets.size()) - 1) {
-    // initialize output set
-    StringSet out;
-    // add the last set
-    for (int i = 0; i < sets[index].size(); i++) {
-      // convert to string of length 1
-      std::string str = std::string(1, elements[i]);
-      out.insert(str);
-    }
-    return out;
+// PRE: takes a vector of CharSets and a maximum index < sets.length()
+// POST: returns the Stringset with all cartesian combinations
+StringSet cart_product(const std::vector<CharSet>& sets, int max_index) {
+  // terminal condtion/base case
+  if (max_index == 0) {
+    // return sets[0] (first set) as a StringSet
+    return convert(sets[0]);
   }
   
-  // if not base case: add all combinations with existing set
-  // initialize output set
-  StringSet out;
-  // get all combis before, recursively
-  StringSet temp = cart_product(sets, index + 1);
-  // loop through all the possibilities
-  for (int i = 0; i < temp.size(); i++) {
-    for (int j = 0; j < sets[index].size(); j++) {
-      
-      // create new string to append, concatenate new_element with old string
-      std::string newCombi = std::string(1, elements[j]) + temp[i];
-      out.insert(newCombi);
+  StringSet out = cart_product(sets, max_index - 1);
+  
+  // go through all combinations and insert them into new StringSet new_combs
+  StringSet new_combs;
+  // convert next CharSet to StringSet
+  StringSet next = convert(sets[max_index]);
+  for (int i = 0; i < out.size(); i++) {
+    for (int j = 0; j < next.size(); j++) {
+      new_combs.insert(out[i] + next[j]);
     }
+  }
+  return new_combs;
+}
+
+// PRE: takes a CharSet of chars
+// POST: returns it as StringSet
+StringSet convert(CharSet set) {
+  StringSet out;
+  for (int i = 0; i < set.size(); i++) {
+    out.insert(std::string(1, set[i]));
   }
   return out;
 }
