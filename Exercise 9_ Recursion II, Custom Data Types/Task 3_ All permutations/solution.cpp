@@ -1,8 +1,11 @@
 #include "solution.h"
 
-StringSet new_combinations(const std::string& s, int index);
+StringSet new_combinations(const std::string& s, int max_index);
 StringSet all_combinations(std::string s, char ch);
 
+
+// PRE: takes string
+// POST: returns all String premutations of chars in that string as Stringset
 StringSet all_permutations(const std::string& s) {
   // check if set is empty
   if (int(s.size()) == 0) {
@@ -10,35 +13,27 @@ StringSet all_permutations(const std::string& s) {
   }
   
   // recursively add combinations
-  // index goes from 0 to sets.size() - 1
-  return new_combinations(s, 0);
+  // index goes from sets.size() - 1 to 0
+  return new_combinations(s, s.size() - 1);
 }
 
-
-// PRE: takes a String by reference and an index
-// POST: recursively adds combinations of strings
-// to a stringSet, until all possible Strings are in there
-StringSet new_combinations(const std::string& s, int index) {
-  // terminal condition
-  if (index == int(s.size())) {
-    return StringSet("");
+// PRE: takes string and a maximum index (for chars to consider in the string) < sets.size()
+// POST: returns recursively all String premutations of chars in that string as Stringset
+StringSet new_combinations(const std::string& s, int max_index) {
+  // terminal condition/base case
+  if (max_index == 0) {
+    return StringSet(std::string(1, s[0]));
   }
-  
   // recursive call
-  StringSet combinations = new_combinations(s, index + 1);
+  StringSet out = new_combinations(s, max_index - 1);
+  StringSet new_combs;
   
-  // updated_stringset
-  StringSet updated;
-  
-  for (int j = 0; j < combinations.size(); j++) {
-    // get a Stringset of all combinations
-    StringSet partial_combinations = all_combinations(combinations[j], s[index]);
-    // add this stringset to updated
-    updated =  updated + partial_combinations;
+  // append all combinations of strings in StringSet out and next char (s[max_index])
+  for (int i = 0; i < out.size(); i++) {
+    new_combs = new_combs + all_combinations(out[i], s[max_index]);
   }
-  return updated;
+  return new_combs;
 }
-
 
 // PRE: takes a char and string
 // POST: outputs a Stringset, with all possible string combinations
