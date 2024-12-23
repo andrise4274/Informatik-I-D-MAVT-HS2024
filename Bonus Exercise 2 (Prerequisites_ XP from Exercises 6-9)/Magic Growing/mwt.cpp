@@ -17,7 +17,21 @@ void compute_mask(const GrayscaleImage& image,
 ImageMask MWT(const GrayscaleImage& image,
               const int x, const int y,
               const int T) {
+  // get image dimensions
+  const int height = image.size();
+  assert(height > 0);
+  const int width = image[0].size();
+  assert(y < height && x < width);
+
+  // init mask
+  ImageMask mask(height, ImageMaskRow(width, false));
+
+  // compute mask
+  // give arguments x, y in reverse, due to reversed index into image
+  compute_mask(image, mask, y, x, T, image[y][x]);
   
+  // return mask
+  return mask;
 }
 
 
@@ -30,6 +44,32 @@ void compute_mask(const GrayscaleImage& image,
                   const int y,
                   const int T,
                   const int luminence) {
-  assert(false);
-
+  
+  // terminal conditions
+  // edge cases
+  if (x < 0 || x >= int(image[0].size())) {
+    return;
+  }
+  if (y < 0 || y >= int(image.size())) {
+    return;
+  }
+  
+  // check if pixel is in explored set (has true at the mask vector)
+  if (mask[x][y]) {
+    return;
+  }
+  
+  // if luminence difference is too big
+  if (std::abs(luminence - int(image[x][y])) > T) {
+    return;
+  }
+  
+  // else, if no terminal condition triggered
+  mask[x][y] = true;
+  
+  // recursively go to all neighbours
+  compute_mask(image, mask, x + 1, y, T, luminence);
+  compute_mask(image, mask, x, y + 1, T, luminence);
+  compute_mask(image, mask, x - 1, y, T, luminence);
+  compute_mask(image, mask, x, y - 1, T, luminence);
 }

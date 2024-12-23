@@ -1,4 +1,3 @@
-
 #include <assert.h>
 #include "game.h"
 #include <iostream>
@@ -94,7 +93,7 @@ void play_game(Grid& grid) {
 // convert the input to distinct options
 void convert_to_distinct(Move& m) {
   if (m.dir == 'l') {
-    /*m.col = m.col - 1;*/
+    m.col = m.col - 1;
     m.dir = 'r';
   } else if (m.dir == 'u') {
     m.row = m.row - 1;
@@ -102,7 +101,7 @@ void convert_to_distinct(Move& m) {
   }
 }
 
-/*
+
 // Check whether or not the game is finished
 // look if there is still an empty field
 bool game_is_finished(const Grid& grid) {
@@ -114,7 +113,7 @@ bool game_is_finished(const Grid& grid) {
     }
   }
   return true;
-}*/
+}
 
 
 // draw the line of a specified move
@@ -218,8 +217,6 @@ void compute_player_score(const Grid& grid, int& scoreA, int& scoreB) {
 bool is_valid_move(const Grid& grid, int row, int col, char direction) {
     
     // check for all out of bound cases of initial position
-    
-    
     
     // direction up
     if (direction == 'u') {
